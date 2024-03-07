@@ -5,10 +5,11 @@
 @layer base {
   :root {
     --background: #121215;
-
     --stroke: #1e1e24;
-
     --off-white: #fafafa;
+    --footer: #101012;
+    --placeholder: #7f7f8d;
+    --secondary_button: #27272a;
 
     --foreground: 222.2 84% 4.9%;
 
@@ -44,6 +45,8 @@
     --background: #121215;
     --foreground: 210 40% 98%;
     --off-white: #fafafa;
+    --footer: #101012;
+    --placeholder: #7f7f8d;
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;

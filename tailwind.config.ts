@@ -25,6 +25,9 @@ const config = {
         background: "var(--background)",
         stroke: "var(--stroke)",
         off_white: "var(--off-white)",
+        footer: "var(--footer)",
+        placeholder: "var(--placeholder)",
+        secondary_button: "var(--secondary_button)",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "var(--primary)",
