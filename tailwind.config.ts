@@ -28,6 +28,7 @@ const config = {
         footer: "var(--footer)",
         placeholder: "var(--placeholder)",
         secondary_button: "var(--secondary_button)",
+        button_dark: "var(--button_dark)",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "var(--primary)",
