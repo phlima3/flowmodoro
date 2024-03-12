@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Clock, Pause, Play } from "lucide-react";
+import { Clock, Pause, Play, SkipForward } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "../Button";
 
 const TIMER_STATUS = {
   PAUSE: "Pausar",
@@ -44,13 +45,13 @@ export function Timer() {
   const [minutes, remainingSeconds] = formatTime(seconds);
 
   return (
-    <div className="p-10 w-[454px] h-min flex flex-col items-center justify-center ">
+    <div className="p-10 min-w-[454px] w-max h-min flex flex-col items-center justify-center">
       <div className="flex items-center gap-4 w-full  justify-start">
         <Clock size={24} color="#fff" />
 
         <div>
           <h2 className="text-off_white font-semibold size-6">Timer</h2>
-          <span className="text-placeholder font-normal size-4">
+          <span className="text-placeholder font-normal size-4 whitespace-nowrap">
             O tempo é seu maior aliado.
           </span>
         </div>
@@ -60,7 +61,7 @@ export function Timer() {
         orientation="horizontal"
         className="my-8"
         style={{
-          color: "#1E1E24",
+          backgroundColor: "#1E1E24",
         }}
       />
 
@@ -140,8 +141,9 @@ export function Timer() {
       </svg>
 
       <div className="flex flex-col gap-4 items-center mt-8 w-full">
-        <button
-          className="flex items-center justify-center w-full h-12 bg-off_white rounded-md text-button_dark font-semibold size-4 transition-all duration-300 ease-in-out hover:bg-[#E5E5E5] hover:text-button_light"
+        <Button
+          buttonType="primary"
+          className="w-full"
           onClick={() => {
             setIsActive(!isActive);
             setStatus(
@@ -152,18 +154,26 @@ export function Timer() {
                 : TIMER_STATUS.START
             );
           }}
+          icon={
+            isActive ? (
+              <Pause size={24} color="#09090B" />
+            ) : (
+              <Play size={24} color="#09090B" />
+            )
+          }
         >
-          {isActive ? (
-            <Pause size={24} color="#09090B" />
-          ) : (
-            <Play size={24} color="#09090B" />
-          )}
           {isActive
             ? TIMER_STATUS.PAUSE
             : seconds > 0
             ? TIMER_STATUS.CONTINUE
             : TIMER_STATUS.START}
-        </button>
+        </Button>
+        {/*   <Button
+          buttonType="secondary"
+          icon={<SkipForward size={24} color="#fff" />}
+        >
+          Pular intervalo
+        </Button> */}
       </div>
     </div>
   );
