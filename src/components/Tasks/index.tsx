@@ -1,8 +1,13 @@
+"use client";
+
 import { ClipboardList, Clock, Plus } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Button } from "../Button";
+import useModalStore from "@/store/ModalStore";
 
 export const Tasks = () => {
+  const { ModalCreateTask, openModal, closeModal } = useModalStore();
+
   return (
     <div className="p-10 w-full h-min flex flex-col items-center justify-center">
       <div className="w-full items-center justify-between flex">
@@ -19,6 +24,7 @@ export const Tasks = () => {
         <Button
           className="w-max py-3 px-6 whitespace-nowrap"
           icon={<Plus size={24} color="#09090B" />}
+          onClick={() => openModal("ModalCreateTask")}
         >
           Adicionar tarefa
         </Button>
