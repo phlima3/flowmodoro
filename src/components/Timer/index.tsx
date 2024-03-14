@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { Clock, Pause, Play, SkipForward } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -10,14 +9,15 @@ const TIMER_STATUS = {
   START: "Iniciar",
   CONTINUE: "Continuar",
 };
+const STROKE_WIDTH = 14;
+const CIRCLE_RADIUS = 120;
 
 export function Timer() {
   const [seconds, setSeconds] = useState(0);
-  const [status, setStatus] = useState(TIMER_STATUS.START);
   const [isActive, setIsActive] = useState(false);
 
-  const strokeWidth = 14;
-  const radius = 120 - strokeWidth / 2;
+  const strokeWidth = STROKE_WIDTH;
+  const radius = CIRCLE_RADIUS - strokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (seconds / 60) * circumference;
 
@@ -146,13 +146,6 @@ export function Timer() {
           className="w-full"
           onClick={() => {
             setIsActive(!isActive);
-            setStatus(
-              isActive
-                ? TIMER_STATUS.PAUSE
-                : seconds > 0
-                ? TIMER_STATUS.CONTINUE
-                : TIMER_STATUS.START
-            );
           }}
           icon={
             isActive ? (

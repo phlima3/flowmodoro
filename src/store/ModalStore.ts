@@ -3,7 +3,6 @@ import { create } from "zustand";
 type ModalState = {
   ModalCreateTask: boolean;
   ModalGeneric: boolean;
-
   openModal: (modalName: keyof ModalState) => void;
   closeModal: (modalName: keyof ModalState) => void;
 };
