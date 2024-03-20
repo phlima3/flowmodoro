@@ -2,7 +2,7 @@
 
 import { ClipboardList, Clock, Plus } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { Button } from "../Button";
+import { IconButton } from "@/components/Button";
 import useModalStore from "@/store/ModalStore";
 
 export const Tasks = () => {
@@ -21,13 +21,13 @@ export const Tasks = () => {
             </span>
           </div>
         </div>
-        <Button
+        <IconButton
           className="w-max py-3 px-6 whitespace-nowrap"
           icon={<Plus size={24} color="#09090B" />}
           onClick={() => openModal("ModalCreateTask")}
         >
           Adicionar tarefa
-        </Button>
+        </IconButton>
       </div>
 
       <Separator

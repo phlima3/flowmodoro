@@ -8,7 +8,7 @@ type ButtonProps = {
   icon?: React.ReactNode;
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const IconButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, onClick, className, icon, buttonType = "primary" }, ref) => {
     const buttonClass =
       buttonType === "primary"
@@ -27,4 +27,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-Button.displayName = "Button";
+IconButton.displayName = "Button";

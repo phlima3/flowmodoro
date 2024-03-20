@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Clock, Pause, Play, SkipForward } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "../Button";
+import { IconButton } from "@/components/Button";
 
 const TIMER_STATUS = {
   PAUSE: "Pausar",
@@ -141,7 +141,7 @@ export function Timer() {
       </svg>
 
       <div className="flex flex-col gap-4 items-center mt-8 w-full">
-        <Button
+        <IconButton
           buttonType="primary"
           className="w-full"
           onClick={() => {
@@ -160,13 +160,13 @@ export function Timer() {
             : seconds > 0
             ? TIMER_STATUS.CONTINUE
             : TIMER_STATUS.START}
-        </Button>
-        {/*   <Button
+        </IconButton>
+        {/*   <IconButton
           buttonType="secondary"
           icon={<SkipForward size={24} color="#fff" />}
         >
           Pular intervalo
-        </Button> */}
+        </IconButton> */}
       </div>
     </div>
   );
