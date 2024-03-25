@@ -1,19 +1,70 @@
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import * as Icons from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import { FormLabel } from "../ui/form";
 
 interface IconType {
   [key: string]: React.ComponentType<{ size?: number; color?: string }>;
 }
 
-export function IconPicker() {
+interface IconPickerProps {
+  setSelectedIcon: (iconName: string | null) => void;
+  selectedIcon: string;
+}
+
+export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
   const [search, setSearch] = useState("");
-  const [focoused, setFocoused] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const iconNames = Object.keys(Icons) as Array<keyof IconType>;
 
-  const LucideIcon = Icons.icons[iconNames[0] as keyof typeof Icons.icons];
+  const menuRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { register, formState } = useFormContext();
+  const iconRegister = register("icon");
 
-  console.log(focoused);
+  const handleIconClick = (iconName: string) => {
+    setSelectedIcon(iconName);
+    setMenuOpen(false);
+    setSelectedIcon(iconName);
+  };
+
+  const handleClearInput = () => {
+    setSearch("");
+    setSelectedIcon(null);
+  };
+
+  useEffect(() => {
+    const inputRefCurrent = inputRef.current;
+
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        inputRefCurrent !== event.target
+      ) {
+        setMenuOpen(false);
+      }
+    }
+
+    function handleInputClick() {
+      setMenuOpen(true);
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    if (inputRefCurrent) {
+      inputRefCurrent.addEventListener("click", handleInputClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (inputRefCurrent) {
+        inputRefCurrent.removeEventListener("click", handleInputClick);
+      }
+    };
+  }, []);
+
   return (
     <div
       className="
@@ -26,14 +77,38 @@ export function IconPicker() {
       justify-center
     "
     >
-      <Input
-        placeholder="Search for an icon"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        onFocus={(e) => setFocoused(true)}
-      />
-      {focoused && (
-        <div className="flex flex-wrap gap-4 p-4 w-72 bg-white h-48 overflow-y-auto border-2 border-gray-300 rounded-md shadow-md absolute top-[0px] right-0 z-50 custom-scrollbar">
+      <div className="flex flex-col w-full">
+        <FormLabel className="text-white font-semibold text-base">
+          Ícone <span className="text-red-500">*</span>
+        </FormLabel>
+        <div className="flex gap-2 items-center justify-center w-full">
+          <Input
+            placeholder="Procure pelo ícone"
+            value={selectedIcon || search}
+            className="disabled:text-white text-placeholder"
+            ref={inputRef}
+            onChange={(e) => {
+              if (!selectedIcon) {
+                setSearch(e.target.value);
+                iconRegister.onChange(e);
+              }
+            }}
+          />
+
+          <Icons.X
+            size={24}
+            className="cursor-pointer"
+            color="#FFF"
+            onClick={handleClearInput}
+          />
+        </div>
+      </div>
+
+      {menuOpen && (
+        <div
+          ref={menuRef}
+          className="flex flex-wrap gap-4 p-4 w-72 bg-white h-48 overflow-y-auto border-2 border-gray-300 rounded-md shadow-md absolute top-[0px] right-0 z-50 custom-scrollbar "
+        >
           {iconNames
             .filter((iconName) =>
               String(iconName).toLowerCase().includes(search.toLowerCase())
@@ -43,13 +118,13 @@ export function IconPicker() {
                 Icons.icons[iconName as keyof typeof Icons.icons];
               if (LucideIcon) {
                 return (
-                  <LucideIcon
+                  <button
                     key={iconName}
-                    size={24}
-                    color="#000"
-                    className="cursor-pointer bg-transparent hover:opacity-100 transition-all duration-300 ease-in-out
-                "
-                  />
+                    className="cursor-pointer bg-transparent hover:bg-gray-400 transition-all duration-300 ease-in-out"
+                    onClick={() => handleIconClick(String(iconName))}
+                  >
+                    <LucideIcon key={iconName} size={24} color="#000" />
+                  </button>
                 );
               }
               return null;

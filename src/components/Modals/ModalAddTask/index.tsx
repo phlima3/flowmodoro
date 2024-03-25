@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import useModalStore from "@/store/ModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { z } from "zod";
@@ -32,15 +33,20 @@ const formSchema = z.object({
   title: z.string().min(1, {
     message: "O título é obrigatório",
   }),
+  icon: z.string().min(1, {
+    message: "O ícone é obrigatório",
+  }),
 });
 
 export function ModalAddTask() {
   const { ModalCreateTask, openModal, closeModal } = useModalStore();
+  const [selectedIcon, setSelectedIcon] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      icon: "",
     },
   });
 
@@ -93,7 +99,12 @@ export function ModalAddTask() {
                 </FormItem>
               )}
             />
-            <IconPicker />
+            <IconPicker
+              setSelectedIcon={
+                setSelectedIcon as (iconName: string | null) => void
+              }
+              selectedIcon={selectedIcon}
+            />
             <DialogFooter className="sm:justify-start">
               {/*  <Button type="submit" variant="primary">
               Adicionar Tarefa
