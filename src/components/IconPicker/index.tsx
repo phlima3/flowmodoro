@@ -1,5 +1,4 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import * as Icons from "lucide-react";
 import { useFormContext } from "react-hook-form";
@@ -12,12 +11,21 @@ interface IconType {
 interface IconPickerProps {
   setSelectedIcon: (iconName: string | null) => void;
   selectedIcon: string;
+  validateIcon: () => boolean;
 }
 
-export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
+export function IconPicker({
+  setSelectedIcon,
+  selectedIcon,
+  validateIcon,
+}: IconPickerProps) {
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const iconNames = Object.keys(Icons) as Array<keyof IconType>;
+  const [loading, setLoading] = useState(false);
+  const iconNames = useMemo(
+    () => Object.keys(Icons) as Array<keyof IconType>,
+    []
+  );
 
   const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +35,6 @@ export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
   const handleIconClick = (iconName: string) => {
     setSelectedIcon(iconName);
     setMenuOpen(false);
-    setSelectedIcon(iconName);
   };
 
   const handleClearInput = () => {
@@ -49,7 +56,10 @@ export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
     }
 
     function handleInputClick() {
-      setMenuOpen(true);
+      setLoading(true);
+      setTimeout(() => {
+        setMenuOpen(true);
+      }, 200);
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -65,27 +75,23 @@ export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      setLoading(false);
+    }
+  }, [menuOpen]);
+
   return (
-    <div
-      className="
-      relative
-      w-full
-      rounded-md
-      shadow-md
-      flex
-      items-center
-      justify-center
-    "
-    >
+    <div className="relative w-full rounded-md shadow-md flex items-center justify-center">
       <div className="flex flex-col w-full">
         <FormLabel className="text-white font-semibold text-base">
           Ícone <span className="text-red-500">*</span>
         </FormLabel>
         <div className="flex gap-2 items-center justify-center w-full">
           <Input
-            placeholder="Procure pelo ícone"
+            placeholder="Selecione um ícone"
             value={selectedIcon || search}
-            className="disabled:text-white text-placeholder"
+            className=" text-white placeholder:text-placeholder"
             ref={inputRef}
             onChange={(e) => {
               if (!selectedIcon) {
@@ -95,19 +101,33 @@ export function IconPicker({ setSelectedIcon, selectedIcon }: IconPickerProps) {
             }}
           />
 
-          <Icons.X
-            size={24}
-            className="cursor-pointer"
-            color="#FFF"
-            onClick={handleClearInput}
-          />
+          {loading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+          ) : (
+            <>
+              {selectedIcon && (
+                <Icons.X
+                  size={24}
+                  className="cursor-pointer"
+                  color="#FFF"
+                  onClick={handleClearInput}
+                />
+              )}
+            </>
+          )}
         </div>
+
+        {!validateIcon() && !loading && menuOpen && (
+          <span className="text-red-500 text-sm">
+            Selecione um ícone para continuar
+          </span>
+        )}
       </div>
 
       {menuOpen && (
         <div
+          className="flex flex-wrap gap-4 p-4 w-72 bg-white h-48 overflow-y-auto border-2 border-gray-300 rounded-md shadow-md absolute top-[0px] right-0 z-50 custom-scrollbar"
           ref={menuRef}
-          className="flex flex-wrap gap-4 p-4 w-72 bg-white h-48 overflow-y-auto border-2 border-gray-300 rounded-md shadow-md absolute top-[0px] right-0 z-50 custom-scrollbar "
         >
           {iconNames
             .filter((iconName) =>

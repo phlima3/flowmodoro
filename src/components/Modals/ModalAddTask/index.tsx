@@ -21,11 +21,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import useModalStore from "@/store/ModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 
 import { z } from "zod";
 
@@ -36,17 +38,34 @@ const formSchema = z.object({
   icon: z.string().min(1, {
     message: "O ícone é obrigatório",
   }),
+  description: z.string(),
+  estimative: z.string().min(1, {
+    message: "A estimativa é obrigatória",
+  }),
 });
 
 export function ModalAddTask() {
   const { ModalCreateTask, openModal, closeModal } = useModalStore();
   const [selectedIcon, setSelectedIcon] = useState("");
+  const [showEstimative, setShowEstimative] = useState(false);
+
+  const validateIcon = () => {
+    return !!selectedIcon;
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(
+      formSchema.extend({
+        icon: formSchema.shape.icon.refine(validateIcon, {
+          message: "O ícone é obrigatório",
+        }),
+      })
+    ),
     defaultValues: {
       title: "",
       icon: "",
+      description: "",
+      estimative: "",
     },
   });
 
@@ -59,6 +78,8 @@ export function ModalAddTask() {
   const handleClose = () => {
     closeModal("ModalCreateTask");
   };
+
+  console.log(showEstimative);
 
   return (
     <Dialog open={ModalCreateTask} onOpenChange={handleClose}>
@@ -104,7 +125,52 @@ export function ModalAddTask() {
                 setSelectedIcon as (iconName: string | null) => void
               }
               selectedIcon={selectedIcon}
+              validateIcon={validateIcon}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white font-semibold text-base">
+                    Descrição
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Insira a descrição"
+                      {...field}
+                      className="focus:outline-none bg-stroke placeholder:text-placeholder border-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-opacity-50 text-off_white"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-between items-center gap-4 text-white font-semibold text-base">
+              <p>Habilitar estimativa de tempo</p>
+              <Switch
+                onCheckedChange={(checked) => setShowEstimative(checked)}
+              />
+            </div>
+            {showEstimative && (
+              <FormField
+                control={form.control}
+                name="estimative"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white font-semibold text-base">
+                      Estimativa
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insira a estimativa"
+                        {...field}
+                        className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-opacity-50 text-off_white"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
             <DialogFooter className="sm:justify-start">
               {/*  <Button type="submit" variant="primary">
               Adicionar Tarefa
